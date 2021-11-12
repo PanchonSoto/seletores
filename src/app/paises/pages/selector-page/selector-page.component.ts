@@ -20,9 +20,10 @@ export class SelectorPageComponent implements OnInit {
     frontera: ['', Validators.required]
   });
 
-  regiones: string[]= [];
+  regiones:  string[]= [];
   paises: PaisSmall[]= [];
-  fronteras: string[] =[];
+  /* fronteras: string[] =[]; */
+  fronteras: PaisSmall[] =[];
 
   cargando: boolean = false;
 
@@ -48,16 +49,18 @@ export class SelectorPageComponent implements OnInit {
     //cuando cambia el pais
     this.miFormulario.get('pais')?.valueChanges
       .pipe(
-        tap((_)=>{
+        tap(()=>{
           this.miFormulario.get('frontera')?.reset('');
           this.cargando = true;
         }),
-        switchMap(code=> this.paisesService.getCountryCode(code))
+        switchMap(code=> this.paisesService.getCountryCode(code)),
+        switchMap(pais=> this.paisesService.getCountriesCode(pais?.borders!))
       )
-      .subscribe(pais =>{
-        this.fronteras = pais?.borders || [];
+      .subscribe(paises =>{
+      //this.fronteras = pais?.borders || [];
+        this.fronteras = paises;
         this.cargando = false;
-      });
+    });
   }
 
   guardar(){
